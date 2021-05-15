@@ -62,7 +62,9 @@ const Header = () => {
         <Link to={'/'}>
           <Menu>Home</Menu>
         </Link>
-        <Menu>test</Menu>
+        <Link to={'/test'}>
+          <Menu>Test</Menu>
+        </Link>
         <Menu>test</Menu>
         <Menu>test</Menu>
       </MenuWrapper>

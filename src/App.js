@@ -9,6 +9,7 @@ import * as Fade from './styles/FadeIn';
 // components
 import Header from './components/Header/Header';
 import Main from './components/Main/Main';
+import TestServer from './components/Test';
 
 const Container = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ function App() {
           <Switch>
             <Fade.FadeAnimation>
               <Route exact path='/' render={() => <Main />} />
+              <Route exact path='/test' render={() => <TestServer />} />
             </Fade.FadeAnimation>
           </Switch>
         </Container>
