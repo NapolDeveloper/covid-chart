@@ -45,18 +45,6 @@ const Main = () => {
   const [countryOptions, setCountryOptions] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('Korea (South)'); // select 박스로 선택된 state
 
-  // test용 option
-  const options = [
-    {
-      value: 'key',
-      label: 'korea'
-    },
-    {
-      value: 'key',
-      label: 'japan'
-    }
-  ];
-
   useEffect(() => {
     const fetchEvents = async () => {
       const res = await axios.get('https://api.covid19api.com/total/dayone/country/kr'); // 기본값을 한국으로 설정
@@ -136,15 +124,17 @@ const Main = () => {
 
   // select box 선택시 실행. country value 값을 전달하여 새로 get한 데이터를 makeData로 넘겨줌
   const countryChange = async (country) => {
+    setLoadingState(true);
+    setShowDoughnut(false);
     console.log(`선택된 나라 ${country}`);
     const res = await axios.get(`https://api.covid19api.com/total/dayone/country/${country}`);
     setSelectedCountry(country);
-    setLoadingState(true);
-    setShowDoughnut(false);
+
     makeData(res.data);
   };
   return (
     <div>
+      <CountrySelectList />
       <Select
         options={countryOptions}
         // value={countryOptions.find((op) => {
@@ -155,7 +145,7 @@ const Main = () => {
         isSearchable
       />
       <CountryTitleWrap>
-        <CountryTitle>{`Covid-19 Status in ${selectedCountry}`}</CountryTitle>
+        <CountryTitle>{`Covid-19 Status in [ ${selectedCountry} ]`}</CountryTitle>
       </CountryTitleWrap>
       {loadingState ? <Loader type='bubbles' color='#019BFE' message={'Loading...'} /> : null}
       {showDoughnut ? (
@@ -167,6 +157,10 @@ const Main = () => {
       ) : null}
     </div>
   );
+};
+
+const CountrySelectList = () => {
+  return <Select />;
 };
 
 export default Main;
