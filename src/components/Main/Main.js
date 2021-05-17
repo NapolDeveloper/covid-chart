@@ -37,9 +37,10 @@ const Main = () => {
   // data states
   const [comparedData, setComparedData] = useState({});
 
-  // show bool states
+  // bool states
   const [loadingState, setLoadingState] = useState(true);
   const [showDoughnut, setShowDoughnut] = useState(false);
+  const [isData, setIsData] = useState(true); // get한 데이터가 존재하는지 여부
 
   // selectbox states
   const [countryOptions, setCountryOptions] = useState([]);
@@ -47,18 +48,24 @@ const Main = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const res = await axios.get('https://api.covid19api.com/total/dayone/country/kr'); // 기본값을 한국으로 설정
+      const res = await axios
+        .get('https://api.covid19api.com/total/dayone/country/kr')
+        .then(setIsData(true))
+        .catch((error) => console.log('한국 데이터를 정상적으로 불러오지 못하고 있습니다')); // 기본값을 한국으로 설정
       const countryRes = await axios.get('https://api.covid19api.com/countries'); // 나라 리스트
+
+      // 기본값으로 한국의 데이터 생성
       makeData(res.data);
+      // 나라 리스트 데이터 생성
       makeCountryList(countryRes.data);
     };
     const makeCountryList = (countryList) => {
       const arr = [];
 
       countryList.forEach((items) => {
-        const country = items.Country;
-        arr.push({ label: country, value: country });
-        // options.push({ label: `${country}`, value: '1' });
+        const countryLabel = items.Country;
+        const countryValue = items.ISO2;
+        arr.push({ label: countryLabel, value: countryValue });
       });
       setCountryOptions(arr);
     };
@@ -127,26 +134,28 @@ const Main = () => {
     setLoadingState(true);
     setShowDoughnut(false);
     console.log(`선택된 나라 ${country}`);
-    const res = await axios.get(`https://api.covid19api.com/total/dayone/country/${country}`);
+    await axios
+      .get(`https://api.covid19api.com/total/dayone/country/${country}`)
+      .then((res) => {
+        // 선택된 국가의 데이터가 존재할 경우
+        makeData(res.data);
+        setIsData(true);
+      })
+      .catch((Error) => {
+        // 선택된 국가의 데이터가 존재하지 않을 경우
+        console.log('해당 국가의 데이터가 존재하지 않습니다');
+        setIsData(false);
+        setLoadingState(false);
+      });
     setSelectedCountry(country);
-
-    makeData(res.data);
   };
   return (
     <div>
-      <CountrySelectList />
-      <Select
-        options={countryOptions}
-        // value={countryOptions.find((op) => {
-        //   return op.value;
-        // })}
-        onChange={(value) => countryChange(value.value)}
-        placeholder='Please select country'
-        isSearchable
-      />
+      <Select options={countryOptions} onChange={(value) => countryChange(value.value)} placeholder='Please select country' isSearchable />
       <CountryTitleWrap>
         <CountryTitle>{`Covid-19 Status in [ ${selectedCountry} ]`}</CountryTitle>
       </CountryTitleWrap>
+      {!isData ? <div>{`선택된 국가 ${selectedCountry}의 데이터가 존재하지 않습니다`}</div> : null}
       {loadingState ? <Loader type='bubbles' color='#019BFE' message={'Loading...'} /> : null}
       {showDoughnut ? (
         <Fade.FadeAnimation>
@@ -157,10 +166,6 @@ const Main = () => {
       ) : null}
     </div>
   );
-};
-
-const CountrySelectList = () => {
-  return <Select />;
 };
 
 export default Main;

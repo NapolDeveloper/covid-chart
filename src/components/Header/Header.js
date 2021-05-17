@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -12,7 +12,7 @@ const HeaderWrapper = styled.div`
   height: 100px;
   background: #e1e5ea;
   padding: 10px 20px;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 `;
 
 const Logo = styled.span`
@@ -51,6 +51,11 @@ const Menu = styled.span`
     bottom: -5px;
     transition: 0.3s;
     left: 0;
+  }
+
+  /* 모바일 */
+  @media all and (max-width: 767px) {
+    color: blue;
   }
 `;
 
