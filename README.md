@@ -7,6 +7,6 @@ axios를 이용하여 covid-19 데이터를 가져와 가공하는 연습을 하
 ---
 
 - React.js
-- Styled Component
+- Styled Components
 - axios
 - chart.js
